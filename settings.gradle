@@ -1,0 +1,4 @@
+include ':locationmap'
+include ':locationmap'
+include ':app'
+rootProject.name = "LocationTracker"

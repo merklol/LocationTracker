@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">LocationTracker</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="login_view_password">Password</string>
+    <string name="login_view_email">Email</string>
+    <string name="sign_in_header">Sign In</string>
+    <string name="log_in_btn">log in</string>
+    <string name="create_account_btn">Create account</string>
+    <string name="sign_up_header">Sign Up</string>
+    <string name="sign_up_name">Name</string>
+    <string name="sign_up_email">Email</string>
+    <string name="sign_up_password">Password</string>
+    <string name="create_account_btn2">create account</string>
+</resources>

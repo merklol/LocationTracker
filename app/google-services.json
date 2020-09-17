@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1092700734500",
+    "firebase_url": "https://collectiontracker-8b9b5.firebaseio.com",
+    "project_id": "collectiontracker-8b9b5",
+    "storage_bucket": "collectiontracker-8b9b5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1092700734500:android:e6e8414cbd9c59435544b1",
+        "android_client_info": {
+          "package_name": "com.bilingoal.locationtracker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1092700734500-s85cfbupbq7l7agmdpf19fufpp1mfr2g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bilingoal.locationtracker",
+            "certificate_hash": "a6cd9569e15c4b0f36bb1cd5fd09ef92a7415722"
+          }
+        },
+        {
+          "client_id": "1092700734500-1m9t6em1q0iao7jcdhjck946png28ek9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBar3vO1esf8AFiweLDNolobNqunvpz2X8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1092700734500-1m9t6em1q0iao7jcdhjck946png28ek9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
