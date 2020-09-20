@@ -1,15 +1,16 @@
 package com.bilingoal.locationtracker.di.modules
 
-import com.bilingoal.locationtracker.ui.registration.RegistrationInteractorImpl
-import com.bilingoal.locationtracker.ui.registration.RegistrationPresenter
+import androidx.lifecycle.ViewModel
+import com.bilingoal.locationtracker.di.annotations.ViewModelKey
+import com.bilingoal.locationtracker.ui.registration.RegistrationViewModel
+import dagger.Binds
 import dagger.Module
-import dagger.Provides
+import dagger.multibindings.IntoMap
 
 @Module
-class RegistrationModule {
-
-    @Provides
-    fun provideRegistrationPresenter(): RegistrationPresenter {
-        return RegistrationPresenter(RegistrationInteractorImpl())
-    }
+abstract class RegistrationModule {
+    @Binds
+    @IntoMap
+    @ViewModelKey(RegistrationViewModel::class)
+    abstract fun bindRegistrationViewModel(registrationViewModel: RegistrationViewModel): ViewModel
 }

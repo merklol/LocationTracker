@@ -1,4 +1,4 @@
-package com.bilingoal.locationtracker.firebase
+package com.bilingoal.locationtracker.models.network
 
 import android.util.Log
 import com.bilingoal.locationtracker.dto.UserAccount

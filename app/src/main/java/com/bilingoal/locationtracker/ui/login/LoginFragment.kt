@@ -1,57 +1,62 @@
 package com.bilingoal.locationtracker.ui.login
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.navigation.fragment.findNavController
+import androidx.lifecycle.ViewModelProvider
 import com.bilingoal.locationtracker.R
+import com.bilingoal.locationtracker.ui.base.BaseFragment
 import com.bilingoal.locationtracker.dto.UserAccount
+import com.bilingoal.locationtracker.models.validators.*
 import com.bilingoal.locationtracker.utils.*
 import com.google.android.material.snackbar.Snackbar
-import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_login.*
 import javax.inject.Inject
 
-class LoginFragment : DaggerFragment(), LoginContract.View {
-
+class LoginFragment : BaseFragment<LoginState, LoginViewModel>() {
     @Inject
-    lateinit var presenter: LoginPresenter
+    lateinit var factory: ViewModelProvider.Factory
+    override lateinit var viewModel: LoginViewModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        presenter.subscribe(this)
         return inflater.inflate(R.layout.fragment_login, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        signInBtn.setOnClickListener {
-            presenter.authenticate(emailView.value, passwordView.value)
-        }
-        signUpBtn.setOnClickListener {
-            val action = LoginFragmentDirections.actionLoginFragmentToRegistrationFragment()
-            findNavController().navigate(action)
-        }
+        viewModel = ViewModelProvider(this, factory)[LoginViewModel::class.java]
+        setupTextWatchers()
+        setupListeners()
     }
 
-    override fun render(state: LoginState) {
+    override fun onStateChange(state: LoginState) {
         when(state) {
             is LoginState.LoadingState -> renderLoadingState()
             is LoginState.FinishState -> renderFinishState(state.userAccount)
             is LoginState.ErrorState -> renderErrorState(state.error)
-            is LoginState.InvalidInputFormatState -> renderInvalidInputFormatState(state.errorType)
+            is LoginState.InvalidInputFormatState -> renderInvalidInputFormatState(state.errors)
         }
     }
 
-    override fun onStop() {
-        super.onStop()
-        presenter.unsubscribe()
+    private fun setupListeners() {
+        signInBtn.setOnClickListener { viewModel.authenticate(emailView.value, passwordView.value) }
+        signUpBtn.setOnClickListener {
+            clearInputs()
+            viewModel.registerUser()
+        }
+    }
+
+    private fun setupTextWatchers() {
+        emailView.editText?.addTextChangedListener(textWatcher)
+        passwordView.editText?.addTextChangedListener(textWatcher)
     }
 
     private fun renderFinishState(userAccount: UserAccount?) {
         clearInputs()
-        val action = LoginFragmentDirections.actionLoginFragmentToMainFragment(userAccount)
-        findNavController().navigate(action)
+        viewModel.goToMainFragment(userAccount)
     }
 
     private fun renderErrorState(error: Throwable) {
@@ -65,26 +70,26 @@ class LoginFragment : DaggerFragment(), LoginContract.View {
         loginProgressBar.visibility = View.VISIBLE
     }
 
+    private fun renderInvalidInputFormatState(errors: List<Int>) {
+        errors.forEach {
+            when(it) {
+                INVALID_EMAIL -> emailView.error = getString(R.string.email_helper_text)
+                INVALID_PASSWORD -> passwordView.error = getString(R.string.password_helper_text)
+            }
+        }
+    }
+
     private fun clearInputs() {
         emailView.error = ""
         passwordView.error = ""
     }
 
-    private fun renderInvalidInputFormatState(errorType: Int) {
-        when(errorType) {
-            INVALID_EMAIL -> {
-                emailView.error = "Invalid Email address"
-                passwordView.error = ""
-            }
-            INVALID_PASSWORD -> {
-                passwordView.error = "Use at least one numeral and eight characters"
-                emailView.error = ""
-            }
+    private val textWatcher = object: TextWatcher {
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
-            INVALID_PASSWORD_EMAIL -> {
-                emailView.error = "Invalid Email address"
-                passwordView.error = "Use at least one numeral and eight characters"
-            }
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            clearInputs()
         }
+        override fun afterTextChanged(s: Editable?) {}
     }
 }

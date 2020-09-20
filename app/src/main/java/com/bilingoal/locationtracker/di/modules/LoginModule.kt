@@ -1,15 +1,17 @@
 package com.bilingoal.locationtracker.di.modules
 
-import com.bilingoal.locationtracker.ui.login.LoginInteractorImpl
-import com.bilingoal.locationtracker.ui.login.LoginPresenter
+import androidx.lifecycle.ViewModel
+import com.bilingoal.locationtracker.di.annotations.ViewModelKey
+import com.bilingoal.locationtracker.ui.login.LoginViewModel
+import dagger.Binds
 import dagger.Module
-import dagger.Provides
+import dagger.multibindings.IntoMap
 
 @Module
-class LoginModule {
+abstract class LoginModule {
+    @Binds
+    @IntoMap
+    @ViewModelKey(LoginViewModel::class)
+    abstract fun bindLoginViewModel(loginViewModel: LoginViewModel): ViewModel
 
-    @Provides
-    fun provideLoginPresenter() : LoginPresenter {
-        return LoginPresenter(LoginInteractorImpl())
-    }
 }

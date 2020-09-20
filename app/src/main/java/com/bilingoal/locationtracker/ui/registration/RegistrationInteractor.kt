@@ -1,7 +1,25 @@
 package com.bilingoal.locationtracker.ui.registration
 
+import com.bilingoal.locationtracker.ui.base.Interactor
+import com.bilingoal.locationtracker.models.network.createUserAccount
 import io.reactivex.rxjava3.core.Observable
+import javax.inject.Inject
 
-interface RegistrationInteractor {
-    fun createUser(name: String, email: String, password: String): Observable<RegistrationState>
+class RegistrationInteractor @Inject constructor() : Interactor<String, Observable<RegistrationState>> {
+
+    override fun execute(vararg params: String): Observable<RegistrationState> {
+        val (name, email, password) = params
+
+        val newUser = createUserAccount {
+            this.name = name
+            this.email = email
+            this.password = password
+        }
+        return newUser.map<RegistrationState> {
+            RegistrationState.FinishState(it)
+        }.onErrorReturn {
+            RegistrationState.ErrorState(it)
+        }
+    }
+
 }

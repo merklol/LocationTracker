@@ -1,6 +1,6 @@
 package com.bilingoal.locationtracker.di.modules
 
-import com.bilingoal.locationtracker.MainActivity
+import com.bilingoal.locationtracker.ui.MainActivity
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 

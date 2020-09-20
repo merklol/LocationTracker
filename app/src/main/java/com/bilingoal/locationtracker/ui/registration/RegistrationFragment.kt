@@ -1,54 +1,57 @@
 package com.bilingoal.locationtracker.ui.registration
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.navigation.fragment.findNavController
+import androidx.lifecycle.ViewModelProvider
 import com.bilingoal.locationtracker.R
+import com.bilingoal.locationtracker.ui.base.BaseFragment
+import com.bilingoal.locationtracker.di.utils.DaggerViewModelFactory
 import com.bilingoal.locationtracker.dto.UserAccount
+import com.bilingoal.locationtracker.dto.UserInput
 import com.bilingoal.locationtracker.utils.*
+import com.bilingoal.locationtracker.models.validators.CredentialsValidation
+import com.bilingoal.locationtracker.models.validators.CredentialsValidator
 import com.google.android.material.snackbar.Snackbar
-import dagger.android.support.DaggerFragment
+import com.google.android.material.textfield.TextInputLayout
 import kotlinx.android.synthetic.main.fragment_registration.*
 import javax.inject.Inject
 
-class RegistrationFragment : DaggerFragment(), RegistrationContract.View {
+class RegistrationFragment : BaseFragment<RegistrationState, RegistrationViewModel>() {
     @Inject
-    lateinit var presenter: RegistrationPresenter
+    lateinit var factory: DaggerViewModelFactory
+    override lateinit var viewModel: RegistrationViewModel
+    private val validator = CredentialsValidator()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        presenter = RegistrationPresenter(RegistrationInteractorImpl())
-        presenter.subscribe(this)
         return inflater.inflate(R.layout.fragment_registration, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        signUpBtn.setOnClickListener {
-           presenter.createUser(nameView.value, emailView.value, passwordView.value)
-        }
+        viewModel = ViewModelProvider(this, factory)[RegistrationViewModel::class.java]
+
+        nameView.editText?.addTextChangedListener(textWatcher)
+        emailView.editText?.addTextChangedListener(textWatcher)
+        passwordView.editText?.addTextChangedListener(textWatcher)
+
+        signUpBtn.setOnClickListener { viewModel.createUser(nameView.value, emailView.value, passwordView.value) }
     }
 
-    override fun render(state: RegistrationState) {
+    override fun onStateChange(state: RegistrationState) {
         when(state) {
             is RegistrationState.LoadingState -> renderLoadingState()
             is RegistrationState.FinishState -> renderFinishState(state.userAccount)
             is RegistrationState.ErrorState -> renderErrorState(state.error)
-            is RegistrationState.InvalidInputFormatState -> renderInvalidInputFormatState(state.errorType)
         }
     }
 
-    override fun onStop() {
-        super.onStop()
-        presenter.unsubscribe()
-    }
-
-
     private fun renderFinishState(userAccount: UserAccount?) {
         clearInputs()
-        val action = RegistrationFragmentDirections.actionRegistrationFragmentToMainFragment(userAccount)
-        findNavController().navigate(action)
+        viewModel.goToMainFragment(userAccount)
     }
 
     private fun renderErrorState(error: Throwable) {
@@ -67,43 +70,38 @@ class RegistrationFragment : DaggerFragment(), RegistrationContract.View {
         emailView.error = ""
         passwordView.error = ""
     }
+    
+    private val textWatcher = object: TextWatcher {
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
-    private fun renderInvalidInputFormatState(errorType: Int) {
-        when(errorType) {
-            INVALID_NAME -> {
-                nameView.error = "Name must be equal or greater 2 characters"
-                emailView.error = ""
-                passwordView.error = ""
-            }
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
 
-            INVALID_EMAIL -> {
-                emailView.error = "Invalid Email address"
-                passwordView.error = ""
-                nameView.error = ""
+        override fun afterTextChanged(s: Editable?) {
+            when (s.hashCode()) {
+                emailView.valueHashCode -> {
+                    val error = validator.execute(s.toString(), CredentialsValidation.EMAIL)
+                    showHelperText(emailView, getString(R.string.email_helper_text), error)
+                }
+                passwordView.valueHashCode -> {
+                    val error = validator.execute(s.toString(), CredentialsValidation.PASSWORD)
+                    showHelperText(passwordView, getString(R.string.password_helper_text), error)
+                }
+                nameView.valueHashCode -> {
+                    val error = validator.execute(s.toString(), CredentialsValidation.NAME)
+                    showHelperText(nameView, getString(R.string.name_helper_text), error)
+                }
             }
-            INVALID_PASSWORD -> {
-                passwordView.error = "Use at least one numeral and eight characters"
-                emailView.error = ""
-                nameView.error = ""
-            }
-
-            INVALID_PASSWORD_EMAIL -> {
-                emailView.error = "Invalid Email address"
-                passwordView.error = "Use at least one numeral and eight characters"
-                nameView.error = ""
-            }
-
-            INVALID_PASSWORD_NAME -> {
-                emailView.error = "Invalid Email address"
-                passwordView.error = "Use at least one numeral and eight characters"
-                nameView.error = ""
-            }
-
-            INVALID_PASSWORD_EMAIL_NAME -> {
-                emailView.error = "Invalid Email address"
-                passwordView.error = "Use at least one numeral and eight characters"
-                nameView.error = "Name must be equal or greater 2 characters"
-            }
+            enableSignUpBtn()
         }
+    }
+
+    private fun showHelperText(layout: TextInputLayout, value: String, res: Int) {
+        layout.helperText = if(res == -1) "" else value
+    }
+
+    private fun enableSignUpBtn() {
+        val res = validator.execute(UserInput(emailView.value, passwordView.value, nameView.value),
+            CredentialsValidation.NAME, CredentialsValidation.EMAIL, CredentialsValidation.PASSWORD)
+        signUpBtn.isEnabled = res.isEmpty()
     }
 }

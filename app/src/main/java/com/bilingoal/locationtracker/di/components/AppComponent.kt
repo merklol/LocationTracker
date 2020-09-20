@@ -3,6 +3,7 @@ package com.bilingoal.locationtracker.di.components
 import android.app.Application
 import com.bilingoal.locationtracker.base.BaseApplication
 import com.bilingoal.locationtracker.di.modules.ActivityBuilderModule
+import com.bilingoal.locationtracker.di.modules.DaggerViewModelInjectionModule
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjectionModule
@@ -12,7 +13,8 @@ import dagger.android.AndroidInjector
 @Component(
     modules = [
         AndroidInjectionModule::class,
-        ActivityBuilderModule::class
+        ActivityBuilderModule::class,
+        DaggerViewModelInjectionModule::class
     ]
 )
 interface AppComponent : AndroidInjector<BaseApplication> {

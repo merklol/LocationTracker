@@ -1,4 +1,4 @@
-package com.bilingoal.locationtracker.firebase
+package com.bilingoal.locationtracker.models.network
 
 import android.util.Log
 import com.bilingoal.locationtracker.dto.UserAccount
@@ -25,7 +25,6 @@ class UserAuthenticatorImpl : UserAuthenticator {
 
     override fun authenticate() : Observable<UserAccount> {
         return Observable.create { emitter ->
-
             auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
                 when {
                     task.isSuccessful -> collectUserData(emitter)

@@ -11,4 +11,9 @@
     <string name="sign_up_email">Email</string>
     <string name="sign_up_password">Password</string>
     <string name="create_account_btn2">create account</string>
+    <string name="email_helper_text">Enter a valid email</string>
+    <string name="password_helper_text">Use at least one numeral and eight characters</string>
+    <string name="name_helper_text">Name must be equal or greater 2 characters</string>
+    <string name="invalid_credentials">The email or password is empty or invalid</string>
+
 </resources>
