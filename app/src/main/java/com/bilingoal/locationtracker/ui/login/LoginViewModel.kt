@@ -6,6 +6,8 @@ import com.bilingoal.locationtracker.models.router.Router
 import com.bilingoal.locationtracker.models.validators.CredentialsValidation
 import com.bilingoal.locationtracker.models.validators.CredentialsValidator
 import com.bilingoal.locationtracker.dto.UserInput
+import com.bilingoal.locationtracker.models.network.UserAuthenticator
+import com.bilingoal.locationtracker.models.preferences.UserPreferences
 import com.bilingoal.locationtracker.models.validators.*
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -13,13 +15,14 @@ import javax.inject.Inject
 
 class LoginViewModel @Inject constructor(
     private val loginInteractor: LoginInteractor,
-    private val router: Router) : BaseViewModel<LoginState>(router) {
+    private val userPreferences: UserPreferences,
+    private val router: Router,
+    private val validator: CredentialsValidator) : BaseViewModel<LoginState>(router) {
 
     fun authenticate(email: String, password: String) {
         if(email.isValidEmailFormat() && password.isValidPasswordFormat()) {
             performAuthentication(email, password)
         } else {
-            val validator = CredentialsValidator()
             val errors = validator.execute(UserInput(email, password),
                 CredentialsValidation.EMAIL, CredentialsValidation.PASSWORD)
 
@@ -27,12 +30,22 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    fun registerUser() {
-        router.navigateTo(LoginFragmentDirections.actionLoginFragmentToRegistrationFragment())
+    fun autoLogin() {
+        if(UserAuthenticator.isUserAuthenticated()) {
+            mutableState.postValue(LoginState.LoadingState)
+            router.navigateToMainFromSignIn(userPreferences.readUserCredentials())
+        } else {
+            mutableState.postValue(LoginState.DefaultState)
+        }
     }
 
-    fun goToMainFragment(userAccount: UserAccount?) {
-        router.navigateTo(LoginFragmentDirections.actionLoginFragmentToMainFragment(userAccount))
+    fun navigateToRegistration() {
+        router.navigateToRegistration()
+        mutableState.value = LoginState.DefaultState
+    }
+
+    fun navigateToMainScreen(userAccount: UserAccount?) {
+        router.navigateToMainFromSignIn(userAccount)
     }
 
     private fun performAuthentication(email: String, password: String) {

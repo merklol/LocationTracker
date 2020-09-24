@@ -1,6 +1,6 @@
 package com.bilingoal.locationtracker.di.modules
 
-import com.bilingoal.locationtracker.ui.MainActivity
+import com.bilingoal.locationtracker.ui.HostActivity
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
@@ -12,6 +12,6 @@ abstract class ActivityBuilderModule {
         LoginModule::class,
         RegistrationModule::class
     ])
-    abstract fun contributeMainActivity(): MainActivity
+    abstract fun contributeMainActivity(): HostActivity
 
 }

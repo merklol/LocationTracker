@@ -6,6 +6,7 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
@@ -22,6 +23,7 @@ class UserAuthenticatorImpl : UserAuthenticator {
     
     override lateinit var email: String
     override lateinit var password: String
+    override val currentUser: FirebaseUser? = auth.currentUser
 
     override fun authenticate() : Observable<UserAccount> {
         return Observable.create { emitter ->
@@ -33,7 +35,7 @@ class UserAuthenticatorImpl : UserAuthenticator {
             }
         }
     }
-    
+
     private fun collectUserData(emitter: @NonNull ObservableEmitter<UserAccount>) {
         val docRef = db.collection(COLLECTION_NAME).document(email)
         docRef.get().addOnSuccessListener {

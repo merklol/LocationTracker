@@ -1,14 +1,16 @@
 package com.bilingoal.locationtracker.ui
 
 import android.os.Bundle
+import android.util.Log
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI.setupActionBarWithNavController
 import com.bilingoal.locationtracker.R
+import com.bilingoal.locationtracker.ui.base.Host
 import dagger.android.support.DaggerAppCompatActivity
 
-class MainActivity : DaggerAppCompatActivity() {
+class HostActivity : DaggerAppCompatActivity(), Host {
     private  lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,4 +28,8 @@ class MainActivity : DaggerAppCompatActivity() {
     }
 
     override fun onSupportNavigateUp() = navController.navigateUp()
+
+    override fun test() {
+        Log.e("Activity", "Test")
+    }
 }

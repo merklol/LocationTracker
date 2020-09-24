@@ -4,6 +4,7 @@ import android.util.Patterns
 import com.bilingoal.locationtracker.dto.UserInput
 import java.util.regex.Pattern
 
+const val VALID_INPUT_FORMAT = -1
 const val INVALID_NAME: Int = 0
 const val INVALID_EMAIL: Int = 1
 const val INVALID_PASSWORD: Int = 2

@@ -26,6 +26,10 @@ android {
         }
     }
 
+    buildFeatures {
+        dataBinding true
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -72,8 +76,18 @@ dependencies {
     kapt 'com.google.dagger:dagger-compiler:2.28'
     kapt 'com.google.dagger:dagger-android-processor:2.28'
 
+    //Room
+    implementation 'androidx.room:room-runtime:2.2.5'
+    kapt 'androidx.room:room-compiler:2.2.5'
+
+    implementation "androidx.security:security-crypto:1.1.0-alpha02"
+
+    // For Identity Credential APIs
+    implementation "androidx.security:security-identity-credential:1.0.0-alpha01"
+
     testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    testImplementation 'androidx.room:room-testing:2.2.5'
 
 }

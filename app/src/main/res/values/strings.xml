@@ -15,5 +15,6 @@
     <string name="password_helper_text">Use at least one numeral and eight characters</string>
     <string name="name_helper_text">Name must be equal or greater 2 characters</string>
     <string name="invalid_credentials">The email or password is empty or invalid</string>
+    <string name="sign_out_menu_item">Sign Out</string>
 
 </resources>
